@@ -3,7 +3,7 @@ kind: ConfigMap
 metadata:
   name: subscription-service-config
 data:
-  database.url: "jdbc:postgresql://postgres:5432/subscription_db"
+  database.url: "jdbc:postgresql://postgres:5432/subscription_db" #You can change the database name to your own
   spring.application.name: "subscription-service"
   server.port: "8080"
   spring.jpa.hibernate.ddl-auto: "validate"
