@@ -1,6 +1,7 @@
 # Subscription Service
 
-![Architecture Diagram](https://github.com/user-attachments/assets/226b9505-d8ae-46b3-9dc6-3d285539cabd)
+![Architecture Diagram](https://github.com/user-attachments/assets/26a550a9-2a17-46f2-aa0f-01517c264be2)
+
 
 This project is a microservice developed for subscription management system. It is built using Spring Boot and configured to run on Kubernetes.
 
