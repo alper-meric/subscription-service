@@ -109,6 +109,11 @@ The application provides health check endpoints using Spring Boot Actuator:
 - Remember to update Secrets in production environment
 - Update sensitive information in ConfigMap for production environment
 
+## Next Phases – Enhanced Reliability and Observability
+
+- Outbox Pattern with Debezium Integration
+- Dead Letter Queue (DLQ) with Shovel Support
+
 ## License
 
 [License information to be added]
