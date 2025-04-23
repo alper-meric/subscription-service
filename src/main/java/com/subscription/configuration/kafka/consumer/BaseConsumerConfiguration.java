@@ -9,6 +9,7 @@ import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.KafkaOperations;
 import org.springframework.kafka.listener.DeadLetterPublishingRecoverer;
 import org.springframework.kafka.listener.DefaultErrorHandler;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.util.backoff.FixedBackOff;
 
 import java.util.HashMap;
@@ -20,14 +21,20 @@ public class BaseConsumerConfiguration {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaHost);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, autoOffsetReset);
         props.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 120000);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 210000);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, consumerGroup);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "com.subscription.model.event");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, valueType.getName());
 
-        return new DefaultKafkaConsumerFactory<>(props);
+        return new DefaultKafkaConsumerFactory<>(
+                props,
+                new StringDeserializer(),
+                new JsonDeserializer<>(valueType, false)
+        );
     }
 
     public <T> ConcurrentKafkaListenerContainerFactory<String, T> baseKafkaListenerContainerFactory(

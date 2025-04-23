@@ -2,6 +2,7 @@ package com.subscription.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.subscription.model.OutboxEvent;
+import com.subscription.model.event.SubscriptionStatusUpdated;
 import com.subscription.repository.OutboxEventRepository;
 import com.subscription.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,7 +11,6 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -20,7 +20,7 @@ public class OutboxService {
 
     private final OutboxEventRepository outboxEventRepository;
     private final SubscriptionRepository subscriptionRepository;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, SubscriptionStatusUpdated> kafkaTemplate;
     private final ObjectMapper objectMapper;
 
     @Transactional
@@ -77,8 +77,13 @@ public class OutboxService {
                     event.getTopic(), 
                     event.getSubscriptionId(), 
                     event.getPayload());
+
+            SubscriptionStatusUpdated subscriptionStatusUpdated = objectMapper.readValue(
+                    event.getPayload(),
+                    SubscriptionStatusUpdated.class
+            );
                     
-            kafkaTemplate.send(event.getTopic(), event.getSubscriptionId().toString(), event.getPayload());
+            kafkaTemplate.send(event.getTopic(), event.getSubscriptionId().toString(), subscriptionStatusUpdated);
             log.info("Successfully sent event to Kafka: {}", event.getId());
         } catch (Exception e) {
             log.error("Failed to send event to Kafka: {}", event.getId(), e);
