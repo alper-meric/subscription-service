@@ -10,10 +10,10 @@ import com.subscription.model.Subscription;
 import com.subscription.model.enums.SubscriptionStatus;
 import com.subscription.repository.SubscriptionRepository;
 import com.subscription.service.SubscriptionService;
+import com.subscription.service.OutboxService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,9 +29,10 @@ import java.util.stream.Collectors;
 public class SubscriptionServiceImpl implements SubscriptionService {
 
     private final SubscriptionRepository subscriptionRepository;
-    @Qualifier("subscriptionEventKafkaTemplate")
-    private final KafkaTemplate<String, SubscriptionStatusUpdated> kafkaTemplate;
-    private static final String SUBSCRIPTION_STATUS_UPDATED_TOPIC = "subscription-status-updated.0";
+    private final OutboxService outboxService;
+
+    @Value("${spring.kafka.producer.topics.subscription-status-updated.topic}")
+    private String SUBSCRIPTION_STATUS_UPDATED_TOPIC;
 
     @Override
     @Transactional
@@ -60,7 +61,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 )
         );
 
-        kafkaTemplate.send(SUBSCRIPTION_STATUS_UPDATED_TOPIC, event);
+        outboxService.saveEvent(
+                SubscriptionEventType.CREATED.name(),
+                SUBSCRIPTION_STATUS_UPDATED_TOPIC,
+                event,
+                subscription.getId()
+        );
 
         return mapToResponse(subscription);
     }
@@ -92,7 +98,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 )
         );
 
-        kafkaTemplate.send(SUBSCRIPTION_STATUS_UPDATED_TOPIC, event);
+        outboxService.saveEvent(
+                SubscriptionEventType.CANCELLED.name(),
+                SUBSCRIPTION_STATUS_UPDATED_TOPIC,
+                event,
+                subscription.getId()
+        );
 
         return mapToResponse(subscription);
     }
@@ -140,7 +151,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                     )
             );
 
-            kafkaTemplate.send(SUBSCRIPTION_STATUS_UPDATED_TOPIC, event);
+            outboxService.saveEvent(
+                    SubscriptionEventType.EXPIRED.name(),
+                    SUBSCRIPTION_STATUS_UPDATED_TOPIC,
+                    event,
+                    subscription.getId()
+            );
         }
     }
 
@@ -168,7 +184,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                     )
             );
 
-            kafkaTemplate.send(SUBSCRIPTION_STATUS_UPDATED_TOPIC, event);
+            outboxService.saveEvent(
+                    SubscriptionEventType.RENEWAL.name(),
+                    SUBSCRIPTION_STATUS_UPDATED_TOPIC,
+                    event,
+                    subscription.getId()
+            );
         }
     }
 
@@ -198,7 +219,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 )
         );
 
-        kafkaTemplate.send(SUBSCRIPTION_STATUS_UPDATED_TOPIC, subscriptionStatusUpdated);
+        outboxService.saveEvent(
+                SubscriptionEventType.ACTIVATED.name(),
+                SUBSCRIPTION_STATUS_UPDATED_TOPIC,
+                subscriptionStatusUpdated,
+                subscription.getId()
+        );
     }
 
     @Override
@@ -225,7 +251,12 @@ public class SubscriptionServiceImpl implements SubscriptionService {
                 )
         );
 
-        kafkaTemplate.send(SUBSCRIPTION_STATUS_UPDATED_TOPIC, subscriptionStatusUpdated);
+        outboxService.saveEvent(
+                SubscriptionEventType.CANCELLED.name(),
+                SUBSCRIPTION_STATUS_UPDATED_TOPIC,
+                subscriptionStatusUpdated,
+                subscription.getId()
+        );
     }
 
     private SubscriptionResponse mapToResponse(Subscription subscription) {

@@ -30,8 +30,8 @@ public class PaymentStatusUpdatedConsumer {
     }
 
     @KafkaListener(
-            topics = "${spring.kafka.topics.payment-status-updated.topic}",
-            groupId = "${spring.kafka.topics.payment-status-updated.consumerGroup}",
+            topics = "${spring.kafka.consumer.topics.payment-status-updated.topic}",
+            groupId = "${spring.kafka.consumer.topics.payment-status-updated.consumerGroup}",
             containerFactory = "paymentStatusUpdatedKafkaListenerContainerFactory"
     )
     public void consumePaymentStatusUpdatedEvent(@Payload PaymentStatusUpdated eventData,
@@ -40,8 +40,8 @@ public class PaymentStatusUpdatedConsumer {
     }
 
     @KafkaListener(
-            topics = "${spring.kafka.topics.payment-status-updated.retryTopic}",
-            groupId = "${spring.kafka.topics.payment-status-updated.consumerGroupRetry}",
+            topics = "${spring.kafka.consumer.topics.payment-status-updated.retryTopic}",
+            groupId = "${spring.kafka.consumer.topics.payment-status-updated.consumerGroupRetry}",
             containerFactory = "paymentStatusUpdatedKafkaRetryListenerContainerFactory"
     )
     public void retryPaymentStatusUpdatedEvent(@Payload PaymentStatusUpdated eventData,

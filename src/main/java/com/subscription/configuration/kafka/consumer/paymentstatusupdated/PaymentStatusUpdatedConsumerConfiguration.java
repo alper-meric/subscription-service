@@ -1,7 +1,6 @@
 package com.subscription.configuration.kafka.consumer.paymentstatusupdated;
 
 import com.subscription.configuration.kafka.consumer.BaseConsumerConfiguration;
-import com.subscription.model.event.PaymentStatusUpdated;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,8 +20,8 @@ public class PaymentStatusUpdatedConsumerConfiguration extends BaseConsumerConfi
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentStatusUpdated> paymentStatusUpdatedKafkaListenerContainerFactory(
-            final KafkaTemplate<String, PaymentStatusUpdated> kafkaTemplate) {
+    public ConcurrentKafkaListenerContainerFactory<String, String> paymentStatusUpdatedKafkaListenerContainerFactory(
+            final KafkaTemplate<String, String> kafkaTemplate) {
         return baseKafkaListenerContainerFactory(
                 kafkaTemplate,
                 host,
@@ -30,12 +29,12 @@ public class PaymentStatusUpdatedConsumerConfiguration extends BaseConsumerConfi
                 properties.getRetryTopic(),
                 properties.getConcurrencyLevel(),
                 properties.getConsumerGroup(),
-                PaymentStatusUpdated.class);
+                String.class);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, PaymentStatusUpdated> paymentStatusUpdatedKafkaRetryListenerContainerFactory(
-            final KafkaTemplate<String, PaymentStatusUpdated> kafkaTemplate) {
+    public ConcurrentKafkaListenerContainerFactory<String, String> paymentStatusUpdatedKafkaRetryListenerContainerFactory(
+            final KafkaTemplate<String, String> kafkaTemplate) {
         return baseKafkaRetryListenerContainerFactory(
                 kafkaTemplate,
                 host,
@@ -43,6 +42,6 @@ public class PaymentStatusUpdatedConsumerConfiguration extends BaseConsumerConfi
                 properties.getErrorTopic(),
                 properties.getConcurrencyLevel(),
                 properties.getConsumerGroupRetry(),
-                PaymentStatusUpdated.class);
+                String.class);
     }
 }

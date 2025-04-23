@@ -13,15 +13,20 @@ spring:
     bootstrap-servers: kafka:9092
     retryKey: retry
     errorKey: error
-    topics:
-      payment-status-updated:
-        topic: payment-status-updated.0
-        retryTopic: ${spring.kafka.topics.payment-status-updated.topic}.${spring.application.name}.${spring.kafka.retryKey}
-        errorTopic: ${spring.kafka.topics.payment-status-updated.topic}.${spring.application.name}.${spring.kafka.errorKey}
-        consumerGroup: ${spring.application.name}-payment-status-updated
-        consumerGroupRetry: ${spring.application.name}-payment-status-updated-retry
-        concurrencyLevel: 1
-        autoOffsetReset: latest
+    consumer:
+      topics:
+        payment-status-updated:
+          topic: payment-status-updated.0
+          retryTopic: ${spring.kafka.consumer.topics.payment-status-updated.topic}.${spring.application.name}.${spring.kafka.retryKey}
+          errorTopic: ${spring.kafka.consumer.topics.payment-status-updated.topic}.${spring.application.name}.${spring.kafka.errorKey}
+          consumerGroup: ${spring.application.name}-payment-status-updated
+          consumerGroupRetry: ${spring.application.name}-payment-status-updated-retry
+          concurrencyLevel: 1
+          autoOffsetReset: latest
+    producer:
+      topics:
+        subscription-status-updated:
+          topic: subscription-status-updated.0
   datasource:
     url: jdbc:postgresql://postgres:5432/subscription_db
     username: postgres

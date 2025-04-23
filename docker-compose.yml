@@ -89,4 +89,9 @@ services:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
 
 volumes:
-  postgres_data: 
+  postgres_data:
+
+networks:
+  default:
+    external:
+      name: my-shared-network

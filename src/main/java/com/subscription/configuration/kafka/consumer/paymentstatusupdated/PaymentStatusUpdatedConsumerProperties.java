@@ -7,7 +7,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConfigurationProperties(prefix = "spring.kafka.topics.payment-status-updated")
+@ConfigurationProperties(prefix = "spring.kafka.consumer.topics.payment-status-updated")
 @Getter
 @Setter
 public class PaymentStatusUpdatedConsumerProperties extends BaseConsumerProperties {
